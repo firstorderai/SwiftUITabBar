@@ -98,7 +98,7 @@ public struct TabBar<TabItem: Tabbable, Content: View>: View {
     }
     
     public var body: some View {
-        ZStack {
+        VStack(spacing: 0) {
             self.content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .environmentObject(self.selectedItem)
