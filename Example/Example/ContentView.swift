@@ -62,8 +62,19 @@ struct ContentView: View {
             }
             .tabItem(for: Item.first)
             
-            Text("Second")
-                .tabItem(for: Item.second)
+            ScrollView {
+                VStack {
+                    ForEach(0..<100, id: \.self) { i in
+                        Rectangle()
+                            .fill(Color.accentColor)
+                            .overlay(
+                                TextField("\(i)", text: .constant("\(i)"))
+                            )
+                    }
+                }
+            }
+//            .padding(.bottom, 100)
+            .tabItem(for: Item.second)
             
             Text("Third")
                 .tabItem(for: Item.third)

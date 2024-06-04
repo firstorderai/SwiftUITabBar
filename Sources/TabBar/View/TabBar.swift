@@ -44,6 +44,35 @@ import SwiftUI
     .tabItem(style: CustomTabItemStyle())
  ```
  */
+
+struct ChildSizeReader<Content: View>: View {
+    @Binding var size: CGSize
+    let content: () -> Content
+    var body: some View {
+        ZStack {
+            content()
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear
+                            .preference(key: SizePreferenceKey.self, value: proxy.size)
+                    }
+                )
+        }
+        .onPreferenceChange(SizePreferenceKey.self) { preferences in
+            self.size = preferences
+        }
+    }
+}
+
+struct SizePreferenceKey: PreferenceKey {
+    typealias Value = CGSize
+    static var defaultValue: Value = .zero
+    
+    static func reduce(value _: inout Value, nextValue: () -> Value) {
+        _ = nextValue()
+    }
+}
+
 public struct TabBar<TabItem: Tabbable, Content: View>: View {
     
     private let selectedItem: TabBarSelection<TabItem>
@@ -53,6 +82,7 @@ public struct TabBar<TabItem: Tabbable, Content: View>: View {
     private var tabBarStyle  : AnyTabBarStyle
     
     @State private var items: [TabItem]
+    @State var barSize: CGSize = .zero
     
     @Binding private var visibility: TabBarVisibility
     
@@ -98,28 +128,30 @@ public struct TabBar<TabItem: Tabbable, Content: View>: View {
     }
     
     public var body: some View {
-        VStack(spacing: 0) {
+        ZStack{
             self.content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .environmentObject(self.selectedItem)
+                .padding(.bottom, barSize.height)
             
             GeometryReader { geometry in
                 VStack {
                     Spacer()
                     
-                    self.tabBarStyle.tabBar(with: geometry) {
-                        .init(self.tabItems)
+                    ChildSizeReader(size: $barSize) {
+                        self.tabBarStyle.tabBar(with: geometry) {
+                            .init(self.tabItems)
+                        }
                     }
                 }
-                .edgesIgnoringSafeArea(.bottom)
                 .visibility(self.visibility)
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
         .onPreferenceChange(TabBarPreferenceKey.self) { value in
             self.items = value
         }
     }
-    
 }
 
 extension TabBar {

@@ -27,18 +27,22 @@ import TabBar
 struct CustomTabItemStyle: TabItemStyle {
     
     public func tabItem(icon: String, title: String, isSelected: Bool) -> some View {
-        ZStack {
-            if isSelected {
-                Circle()
-                    .foregroundColor(.blue)
-                    .frame(width: 40.0, height: 40.0)
+        VStack {
+            ZStack {
+                if isSelected {
+                    Circle()
+                        .foregroundColor(.blue)
+                        .frame(width: 40.0, height: 40.0)
+                }
+                
+                Image(systemName: icon)
+                    .foregroundColor(isSelected ? .white : .white)
+                    .frame(width: 32.0, height: 32.0)
             }
-            
-            Image(systemName: icon)
-                .foregroundColor(isSelected ? .white : Color("color.tab.item.foreground"))
-                .frame(width: 32.0, height: 32.0)
+            .frame(width: 40.0, height: 40.0)
+            .padding(.vertical, 16.0)
+            Spacer()
         }
-        .padding(.vertical, 8.0)
     }
     
 }
