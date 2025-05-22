@@ -110,7 +110,7 @@ public struct TabBar<TabItem: Tabbable, Content: View>: View {
     }
     
     private var tabItems: some View {
-        HStack {
+        HStack(spacing: 0) {
             ForEach(self.items, id: \.self) { item in
                 self.tabItemStyle.tabItem(
                     icon: item.icon,
